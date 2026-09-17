@@ -1,0 +1,32 @@
+lov boolean (
+    name: BOOLEAN
+    source {
+        location: staticValues
+    }
+
+    entry false (
+        sequence: 2
+        display: No
+        return: FALSE
+    )
+
+    entry true (
+        sequence: 1
+        display: Yes
+        return: TRUE
+    )
+
+)
+
+lov departments-department-name (
+    name: DEPARTMENTS.DEPARTMENT_NAME
+    source {
+        tableName: DEPARTMENTS
+    }
+    columnMapping {
+        return: DEPARTMENT_ID
+        display: DEPARTMENT_NAME
+        defaultSort: DEPARTMENT_NAME
+    }
+)
+

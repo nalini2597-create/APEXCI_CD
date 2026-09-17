@@ -1,0 +1,141 @@
+page 9 (
+    name: HR Dashboard
+    alias: HR-DASHBOARD
+    title: HR Dashboard
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 20
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region employee-count-by-department (
+        name: Employee Count by Department
+        type: chart
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        legend {
+            show: false
+        }
+
+        series series-1 (
+            name: Series 1
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select ( select l."DEPARTMENT_NAME" from "DEPARTMENTS" l where l."DEPARTMENT_ID" = c."DEPARTMENT_ID") "DEPARTMENT_ID", 
+                           count(c."EMPLOYEE_ID") value
+                      from "EMPLOYEES" c
+                     where c."EMPLOYEE_ID" is not null
+                     group by c."DEPARTMENT_ID"
+                     order by 2 desc
+                    ```
+            }
+            columnMapping {
+                label: DEPARTMENT_ID
+                value: VALUE
+            }
+            performance {
+                maxRowsToProcess: 20
+            }
+        )
+
+        axis x (
+            name: x
+            majorTicks {
+                show: auto
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+            }
+            majorTicks {
+                show: auto
+            }
+        )
+
+    )
+
+    region total-employees (
+        name: Total Employees
+        type: cards
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select count(*) as Ct_Value, 'Total Employees' as label from employees
+                union
+                select count(*) as ct_Value,  'Total Departments' as LABEL from departments
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/cards-container
+            templateOptions: [
+                #DEFAULT#
+                t-CardsRegion--hideHeader js-addHiddenHeadingRoleDesc
+            ]
+        }
+        card {
+            primaryKeyColumn1: CT_VALUE
+        }
+        title {
+            column: LABEL
+        }
+        iconAndBadge {
+            iconSource: initials
+            iconColumn: CT_VALUE
+        }
+    )
+
+)
+
