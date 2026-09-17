@@ -1,0 +1,28 @@
+genAIService oci-genai (
+    name: oci_genai
+    provider: ociGenAI
+    endpointUrl {
+        url: https://inference.generativeai.us-chicago-1.oci.oraclecloud.com
+    }
+    authentication {
+        credentials: @credentials-for-oci-genai
+    }
+    additionalData {
+        attributes:
+            ```
+            {
+              "compartmentId" : "ocid1.compartment.oc1..aaaaaaaaub3mknmxlklb5clzakehbs5ccybgkz5yl72mjy2xfsr4a7otn3ya",
+              "servingMode" :
+              {
+                "servingType" : "ON_DEMAND",
+                "modelId" : "cohere.command-a-03-2025"
+              }
+            }
+            ```
+    }
+    appBuilder {
+        usedByAppBuilder: true
+        defaultForNewApps: true
+    }
+)
+
