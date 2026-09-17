@@ -1,0 +1,395 @@
+page 4 (
+    name: Manage Employees
+    alias: MANAGE-EMPLOYEES
+    title: Employee
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/drawer
+        templateOptions: [
+            #DEFAULT#
+            js-dialog-class-t-Drawer--pullOutEnd
+        ]
+    }
+    dialog {
+        chained: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: dialogFooter
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region manage-employees (
+        name: Employee
+        type: form
+        source {
+            location: localDatabase
+            tableName: EMPLOYEES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P4_DEPARTMENT_ID (
+        type: selectList
+        label {
+            label: Department
+            alignment: right
+        }
+        lov {
+            type: sharedComponent
+            lov: @departments-department-name
+        }
+        layout {
+            sequence: 70
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @manage-employees
+            column: DEPARTMENT_ID
+            dataType: number
+        }
+    )
+
+    pageItem P4_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: right
+        }
+        layout {
+            sequence: 40
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 150
+        }
+        source {
+            formRegion: @manage-employees
+            column: EMAIL
+            dataType: varchar2
+        }
+    )
+
+    pageItem P4_EMPLOYEE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @manage-employees
+            slot: regionBody
+        }
+        source {
+            formRegion: @manage-employees
+            column: EMPLOYEE_ID
+            dataType: number
+            queryOnly: true
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+
+    pageItem P4_FIRST_NAME (
+        type: textField
+        label {
+            label: First Name
+            alignment: right
+        }
+        layout {
+            sequence: 20
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 60
+        }
+        source {
+            formRegion: @manage-employees
+            column: FIRST_NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P4_HIRE_DATE (
+        type: datePicker
+        label {
+            label: Hire Date
+            alignment: right
+        }
+        layout {
+            sequence: 50
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-employees
+            column: HIRE_DATE
+            dataType: date
+        }
+    )
+
+    pageItem P4_LAST_NAME (
+        type: textField
+        label {
+            label: Last Name
+            alignment: right
+        }
+        layout {
+            sequence: 30
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 60
+        }
+        source {
+            formRegion: @manage-employees
+            column: LAST_NAME
+            dataType: varchar2
+        }
+    )
+
+    pageItem P4_SALARY (
+        type: numberField
+        label {
+            label: Salary
+            alignment: right
+        }
+        layout {
+            sequence: 60
+            region: @manage-employees
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            formRegion: @manage-employees
+            column: SALARY
+            dataType: number
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: triggerAction
+        }
+
+        triggerAction native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P4_EMPLOYEE_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+                t-Button--simple
+            ]
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: &APP_TEXT$DELETE_MSG!RAW.
+            style: danger
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P4_EMPLOYEE_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P4_EMPLOYEE_ID
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 17556862672652039
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process initialize-form-manage-employees (
+        name: Initialize form Manage Employees
+        type: formInitialization
+        formRegion: @manage-employees
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 17556052843652037
+        }
+    )
+
+    process process-form-manage-employees (
+        name: Process form Manage Employees
+        type: formAutoRowProcessing
+        formRegion: @manage-employees
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 17556415953652038
+        }
+    )
+
+)
+
